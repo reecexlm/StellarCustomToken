@@ -35,8 +35,8 @@ opt-level = "z"   # optimization level to "z" (reduce size of wasm)
 Now, we’ll implement the basic functions name, symbol, and decimals. These functions define the token’s basic identity information.
 ### 2.1 name Function
 The name function returns the name of the token, which can be displayed in wallets or other interfaces.
-#### 1.	Open src/lib.rs.
-#### 2.	Add the following code to define the token name
+#### open src/lib.rs.
+#### add the following code to define the token name
 :star: _env: &Env is the environment variable provided by Soroban but isn’t needed in this function.
 
 ```
@@ -55,7 +55,7 @@ impl MyCustomToken {
     }
 }
 ```
-#### 3. Write a Unit Test 
+#### add a Unit Test 
 Add the following test code below the impl MyCustomToken block in `src/lib.rs`:
 ```
 #[cfg(test)]
@@ -73,7 +73,7 @@ mod test {
 }
 ```
 
-#### 5. Run The Test
+#### run The Test
 output should look similar to the following
 ```
 ❯ cargo test
@@ -86,3 +86,71 @@ test test::test_name ... ok
 
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
+
+### 3. Add Initialize and Mint Functions
+Let's add a function initialize and mint functions. The initialize function is responsible for setting up the contract's initial state by storing an admin address. This function is designed to be called only once, typically when the contract is deployed or first used.  It allows the caller to specify an admin address, which will be stored in the contract’s storage. This admin is the only account authorized to perform certain privileged actions, such as minting new tokens using the mint contract function.
+
+#### add initialize function
+add this function to `src/lib.rs`
+```
+    // Initialize the contract with an admin address
+    pub fn initialize(env: &Env, admin: Address) {
+        admin.require_auth();
+        env.storage().instance().set(&symbol_short!("admin"), &admin);
+    }
+```
+#### add mint function
+```
+// Mint new tokens (only admin can call this)
+    pub fn mint(env: &Env, to: Address, amount: i128) {
+        let admin: Address = env.storage().instance().get(&symbol_short!("admin")).unwrap();
+        admin.require_auth();
+        let balance = Self::balance(env, to.clone());
+        env.storage().persistent().set(&(symbol_short!("balance"), &to), &(balance + amount));
+    }
+```
+
+#### update imports
+you will also need to update your imports
+```
+use soroban_sdk::{contract, contractimpl, Env, String, Address, symbol_short};
+```
+
+#### add unit test for mint
+```
+#[test]
+    fn test_mint() {
+        let env = Env::default();
+        let contract_id = env.register_contract(None, MyCustomToken);
+        let client = MyCustomTokenClient::new(&env, &contract_id);
+
+        // Create test addresses
+        let admin = Address::generate(&env);
+        let recipient = Address::generate(&env);
+
+        // Set up authentication
+        env.mock_all_auths();
+
+        // Initialize the contract with admin
+        client.initialize(&admin);
+
+        // Verify no initial balance
+        assert_eq!(client.balance(&recipient), 0);
+
+        // Mint tokens
+        let amount1: i128 = 1000;
+        client.mint(&recipient, &amount1);
+
+        // Verify balance after first mint
+        assert_eq!(client.balance(&recipient), 1000);
+
+        // Mint more tokens
+        let amount2: i128 = 500;
+        client.mint(&recipient, &amount2);
+
+        // Verify final balance
+        assert_eq!(client.balance(&recipient), 1500);
+    }
+```
+    
+
