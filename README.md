@@ -15,7 +15,13 @@ version = "0.1.0"         # version of this crate
 edition = "2021"          # Rust edition.  
 
 [dependencies]
-soroban-sdk = { version = "21.7.6", default-features = false } # ensure compatibility with WebAssembly by disabling the std lib
+soroban-sdk = { version = "21.7.6", features = ["alloc"] }
+
+[dev-dependencies]
+soroban-sdk = { version = "21.7.6", features = ["testutils"] }
+
+[features]
+testutils = ["soroban-sdk/testutils"]
 
 [lib]
 crate-type = ["cdylib"] # C-compatible dynamic library output required for wasm output in Soroban smart contracts.
@@ -31,32 +37,38 @@ Now, we’ll implement the basic functions name, symbol, and decimals. These fun
 The name function returns the name of the token, which can be displayed in wallets or other interfaces.
 #### 1.	Open src/lib.rs.
 #### 2.	Add the following code to define the token name
-_env: &Env is the environment variable provided by Soroban but isn’t needed in this function.
+:star: _env: &Env is the environment variable provided by Soroban but isn’t needed in this function.
 
 ```
-use soroban_sdk::{contractimpl, Env};
+#![no_std]  
+use soroban_sdk::{contract, contractimpl, Env, String};
 
+#[contract]
 pub struct MyCustomToken;
 
 #[contractimpl]
 impl MyCustomToken {
-    pub fn name(_env: &Env) -> String {
-        "MyCustomToken".to_string()
+
+    // Return token name
+    pub fn name(env: &Env) -> String {
+        String::from_str(&env, "MyCustomToken")
     }
 }
 ```
 #### 3. Write a Unit Test 
-Add the following test code below the impl MyCustomToken block:
+Add the following test code below the impl MyCustomToken block in `src/lib.rs`:
 ```
 #[cfg(test)]
-mod tests {
+mod test {
     use super::*;
-    use soroban_sdk::testutils::Env as TestEnv;
+    use soroban_sdk::{Env};
+    use soroban_sdk::String as SorobanString;
 
     #[test]
     fn test_name() {
-        let env = TestEnv::default();
-        assert_eq!(MyCustomToken::name(&env), "MyCustomToken");
+        let env = Env::default();
+        let expected_name = SorobanString::from_str(&env, "MyCustomToken");
+        assert_eq!(MyCustomToken::name(&env), expected_name);
     }
 }
 ```
