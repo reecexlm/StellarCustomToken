@@ -74,6 +74,15 @@ mod test {
 ```
 
 #### 5. Run The Test
+output should look similar to the following
 ```
-cargo test
+❯ cargo test
+   Compiling my_custom_token v0.1.0 ([path to your project]/my_custom_token)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.03s
+     Running unittests src/lib.rs (target/debug/deps/my_custom_token-5901d5dafea4014c)
+
+running 1 test
+test test::test_name ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
