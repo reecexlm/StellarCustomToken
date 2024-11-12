@@ -208,6 +208,7 @@ Optimized: target/wasm32-unknown-unknown/release/my_custom_token.optimized.wasm 
 ```
 
 ### deploy the contract
+the contract id will be displayed at the end. You will use this id to execute contract functions.
 ```
 ❯ stellar contract deploy \
   --wasm target/wasm32-unknown-unknown/release/my_custom_token.wasm \
@@ -222,6 +223,7 @@ Optimized: target/wasm32-unknown-unknown/release/my_custom_token.optimized.wasm 
 🔗 https://stellar.expert/explorer/testnet/tx/aeed7863fb5a420036b84520a6bb8424c0e1036045625d1bc236adb6ca50a8da
 🔗 https://stellar.expert/explorer/testnet/contract/CAG72R52BC3ACZ25B6XHHY7FHBQXOYEP6MZHC4TWANW2T64OG5XR6WJ2
 ✅ Deployed!
+CDGKNN7IP42CJ7GLFBGTQLKN374EGWHJ2PTLJAZGPEYYHSCHUCDY74KH
 ```
 
 ### invoke the name function
