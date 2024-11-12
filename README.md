@@ -193,5 +193,47 @@ use soroban_sdk::{contract, contractimpl, Env, String, Address, symbol_short};
     }
 ```
     
+---- [rest WIP] ----
+
+### build the contract
+```
+RUSTFLAGS="-C target-feature=-reference-types" cargo build --target wasm32-unknown-unknown --release
+```
+
+### optimize the wasm
+```
+❯ stellar contract optimize --wasm target/wasm32-unknown-unknown/release/my_custom_token.wasm
+Reading: target/wasm32-unknown-unknown/release/my_custom_token.wasm (4242 bytes)
+Optimized: target/wasm32-unknown-unknown/release/my_custom_token.optimized.wasm (2021 bytes)
+```
+
+### deploy the contract
+```
+❯ stellar contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/my_custom_token.wasm \
+  --source alice \
+  --network testnet
+ℹ️ Simulating install transaction…
+🌎 Submitting install transaction…
+ℹ️ Using wasm hash a6138aca80985c4cf164596d4b10bd35da5b6a8ff6f281589ef0b610e41385cd
+ℹ️ Simulating deploy transaction…
+🌎 Submitting deploy transaction…
+ℹ️ Transaction hash is aeed7863fb5a420036b84520a6bb8424c0e1036045625d1bc236adb6ca50a8da
+🔗 https://stellar.expert/explorer/testnet/tx/aeed7863fb5a420036b84520a6bb8424c0e1036045625d1bc236adb6ca50a8da
+🔗 https://stellar.expert/explorer/testnet/contract/CAG72R52BC3ACZ25B6XHHY7FHBQXOYEP6MZHC4TWANW2T64OG5XR6WJ2
+✅ Deployed!
+```
+
+### invoke the name function
+```
+❯ stellar contract invoke \
+  --id CDGKNN7IP42CJ7GLFBGTQLKN374EGWHJ2PTLJAZGPEYYHSCHUCDY74KH \
+  --source alice \
+  --network testnet \
+  -- \
+  name
+ℹ️ Send skipped because simulation identified as read-only. Send by rerunning with `--send=yes`.
+"MyCustomToken"
+```
 
 
