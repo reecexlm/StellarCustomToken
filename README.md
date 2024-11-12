@@ -1,13 +1,19 @@
 # StellarCustomToken tutorial
 A step by step process to create a custom Token on Stellar using Soroban Smart Contracts
-## Step 1: Project Setup
+## Setup Necessary Tools
+### Install Stellar-CLI
+```
+cargo install --locked stellar-cli
+```
 
-### 1.1 Create the Project Directory
+## Project Setup
+
+### create the Project Directory
 ```
 cargo new my_custom_token --lib
 cd my_custom_token
 ```
-### 1.2: Update Cargo.toml
+### update Cargo.toml
 ```
 [package]
 name = "my_custom_token"  # The name of the crate (project). This will be used as the library name if used as a dependency
@@ -31,13 +37,11 @@ codegen-units = 1 # number of parallel codegen units
 lto = true        # Enables link-time optimization
 opt-level = "z"   # optimization level to "z" (reduce size of wasm)
 ```
-## Step 2: Implement Basic Functions
-Now, we’ll implement the basic functions name, symbol, and decimals. These functions define the token’s basic identity information.
-### 2.1 name Function
+## implement the contract functions and tests
+We will start with some basic functions name, symbol, and decimals. These functions define the token’s basic identity information.
+### name Function
 The name function returns the name of the token, which can be displayed in wallets or other interfaces.
-#### open src/lib.rs.
-#### add the following code to define the token name
-:star: _env: &Env is the environment variable provided by Soroban but isn’t needed in this function.
+:star: Note: _env: &Env is the environment variable provided by Soroban but isn’t needed in this function.
 
 ```
 #![no_std]  
@@ -55,7 +59,7 @@ impl MyCustomToken {
     }
 }
 ```
-#### add a Unit Test 
+### add a unit test 
 Add the following test code below the impl MyCustomToken block in `src/lib.rs`:
 ```
 #[cfg(test)]
@@ -73,7 +77,7 @@ mod test {
 }
 ```
 
-#### run The Test
+### run The test
 output should look similar to the following
 ```
 ❯ cargo test
@@ -87,7 +91,7 @@ test test::test_name ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
 
-### 3. Add Initialize, balance and mint Functions
+### add Initialize, balance and mint Functions
 Let's add a function initialize and mint functions. The initialize function is responsible for setting up the contract's initial state by storing an admin address. This function is designed to be called only once, typically when the contract is deployed or first used.  It allows the caller to specify an admin address, which will be stored in the contract’s storage. This admin is the only account authorized to perform certain privileged actions, such as minting new tokens using the mint contract function.  We also add a balance function which retrieves the token balance for a specified Address from persistent storage, returning 0 if no balance is found. This function is essential for tracking individual account balances within the contract.
 
 #### add initialize function
@@ -110,7 +114,6 @@ add this function to `src/lib.rs`
             .unwrap_or(0)
     }
 ```
-
 
 #### add mint function
 ```
@@ -166,4 +169,5 @@ use soroban_sdk::{contract, contractimpl, Env, String, Address, symbol_short};
     }
 ```
     
+
 
