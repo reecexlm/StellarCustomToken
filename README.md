@@ -87,8 +87,8 @@ test test::test_name ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
 
-### 3. Add Initialize and Mint Functions
-Let's add a function initialize and mint functions. The initialize function is responsible for setting up the contract's initial state by storing an admin address. This function is designed to be called only once, typically when the contract is deployed or first used.  It allows the caller to specify an admin address, which will be stored in the contract’s storage. This admin is the only account authorized to perform certain privileged actions, such as minting new tokens using the mint contract function.
+### 3. Add Initialize, balance and mint Functions
+Let's add a function initialize and mint functions. The initialize function is responsible for setting up the contract's initial state by storing an admin address. This function is designed to be called only once, typically when the contract is deployed or first used.  It allows the caller to specify an admin address, which will be stored in the contract’s storage. This admin is the only account authorized to perform certain privileged actions, such as minting new tokens using the mint contract function.  We also add a balance function which retrieves the token balance for a specified Address from persistent storage, returning 0 if no balance is found. This function is essential for tracking individual account balances within the contract.
 
 #### add initialize function
 add this function to `src/lib.rs`
@@ -99,6 +99,19 @@ add this function to `src/lib.rs`
         env.storage().instance().set(&symbol_short!("admin"), &admin);
     }
 ```
+
+#### add balance function
+```
+    // Get balance for any address
+    pub fn balance(env: &Env, id: Address) -> i128 {
+        env.storage()
+            .persistent()
+            .get(&(symbol_short!("balance"), &id))
+            .unwrap_or(0)
+    }
+```
+
+
 #### add mint function
 ```
 // Mint new tokens (only admin can call this)
