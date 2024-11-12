@@ -3,10 +3,34 @@ A step by step process to create a custom Token on Stellar using Soroban Smart C
 ## Setup Necessary Tools
 ### Install Stellar-CLI
 ```
-cargo install --locked stellar-cli
+brew install stellar-cli
 ```
 
 ## Project Setup
+### install rust
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+### Install the wasm32-unknown-unknown target.
+```
+rustup target add wasm32-unknown-unknown
+```
+
+### configure the stellar cli for testnet
+```
+stellar network add \
+  --global testnet \
+  --rpc-url https://soroban-testnet.stellar.org:443 \
+  --network-passphrase "Test SDF Network ; September 2015"
+```
+### configure an identity that will be used to sign the transactions
+```
+stellar keys generate --global alice --network testnet
+```
+you can see the public keys using the following command
+```
+stellar keys address alice
+```
 
 ### create the Project Directory
 ```
