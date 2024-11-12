@@ -1,12 +1,11 @@
 # StellarCustomToken tutorial
 A step by step process to create a custom Token on Stellar using Soroban Smart Contracts
-## Setup Necessary Tools
-### Install Stellar-CLI
+## Setup Tools
+### install stellar-cli
 ```
 brew install stellar-cli
 ```
 
-## Project Setup
 ### install rust
 ```
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -37,6 +36,8 @@ stellar keys address alice
 cargo new my_custom_token --lib
 cd my_custom_token
 ```
+## create custom token contract
+
 ### update Cargo.toml
 ```
 [package]
@@ -223,13 +224,15 @@ the contract id will be displayed at the end. You will use this id to execute co
 🔗 https://stellar.expert/explorer/testnet/tx/aeed7863fb5a420036b84520a6bb8424c0e1036045625d1bc236adb6ca50a8da
 🔗 https://stellar.expert/explorer/testnet/contract/CAG72R52BC3ACZ25B6XHHY7FHBQXOYEP6MZHC4TWANW2T64OG5XR6WJ2
 ✅ Deployed!
-CDGKNN7IP42CJ7GLFBGTQLKN374EGWHJ2PTLJAZGPEYYHSCHUCDY74KH
+CC3P7PQ34FJJXJCSXVJBG7EJMWPEDT2H44SQSQDTXKDRWSKWBBXQ2D5Y
 ```
+
+## interact with the contract
 
 ### invoke the name function
 ```
 ❯ stellar contract invoke \
-  --id CDGKNN7IP42CJ7GLFBGTQLKN374EGWHJ2PTLJAZGPEYYHSCHUCDY74KH \
+  --id CC3P7PQ34FJJXJCSXVJBG7EJMWPEDT2H44SQSQDTXKDRWSKWBBXQ2D5Y \
   --source alice \
   --network testnet \
   -- \
@@ -237,5 +240,26 @@ CDGKNN7IP42CJ7GLFBGTQLKN374EGWHJ2PTLJAZGPEYYHSCHUCDY74KH
 ℹ️ Send skipped because simulation identified as read-only. Send by rerunning with `--send=yes`.
 "MyCustomToken"
 ```
+
+### add the custom token to freighter
+select manage assets -> add asset -> add asset manually
+enter the contract id that you deployed.
+<img width="359" alt="image" src="https://github.com/user-attachments/assets/c76018cc-67fa-4b54-9661-683f8faea9e9">
+<img width="359" alt="image" src="https://github.com/user-attachments/assets/abba8da9-93dc-4486-af90-0103a5ccf2c4">
+
+### mint tokens to your freighter wallet
+```
+stellar contract invoke \
+    --id CC3P7PQ34FJJXJCSXVJBG7EJMWPEDT2H44SQSQDTXKDRWSKWBBXQ2D5Y \
+    --source alice \
+    --network testnet \
+    -- mint \
+    --amount 1000000000 \
+  --to GD5Y45RYKDO4WKQN5PZNPXU53LZT34G4D3WN26M3A7333SNXSYX4IH3T
+```
+<img width="359" alt="image" src="https://github.com/user-attachments/assets/c306b372-b7c9-45d3-a29f-dc6a2db3a259">
+
+
+
 
 
